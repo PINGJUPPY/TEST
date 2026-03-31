@@ -1,23 +1,138 @@
-<div class="question-container container">
-  <video class="local-gif" src="Reply-me-love.mp4" autoplay loop muted playsinline></video> 
-  <h2 class="question">เธอรักฉันไหม?</h2>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do you love me?</title>
+    <style>
+        /* --- ส่วน CSS ตกแต่งความสวยงาม --- */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fce4ec; /* สีพื้นหลังชมพูอ่อน */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow: hidden; /* ป้องกันไม่ให้หน้าจอเลื่อนเวลาปุ่มหนี */
+        }
 
-  <div class="button-container">
-    <button class="yes-btn btn js-yes-btn">Yes</button> 
-    <button class="no-btn btn js-no-btn">No</button>
-  </div>
-</div>
+        .container {
+            text-align: center;
+        }
 
-<div class="result-container container">
-  <video class="gif-result" src="Love-me.mp4" autoplay loop muted playsinline></video> 
-  <h2>เค้าว่าแล้ว🥰</h2>
-</div>
+        img.local-gif, img.gif-result {
+            width: 250px; /* ขนาดภาพ GIFs */
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
 
-<div class="cssload-main">
-  <div class="cssload-heart">
-    <span class="cssload-heartL"></span> 
-    <span class="cssload-heartR"></span> 
-    <span class="cssload-square"></span>
-  </div>
-  <div class="cssload-shadow"></div>
-</div>
+        h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative; /* สำคัญ: เพื่อให้ปุ่ม No สามารถขยับได้ */
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.95); /* เอฟเฟกต์ตอนกดปุ่ม */
+        }
+
+        .yes-btn {
+            background-color: #ff4081; /* สีชมพูเข้ม */
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+        }
+
+        .no-btn {
+            background-color: #fff;
+            color: #ff4081;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: absolute; /* เพื่อให้ปุ่มขยับตำแหน่งได้ */
+            left: 120px; /* ตำแหน่งเริ่มต้นของปุ่ม No */
+            z-index: 10; /* ให้ปุ่มอยู่ด้านบนสุดเวลาหนี */
+        }
+
+        /* ซ่อนหน้าผลลัพธ์ไว้ก่อน */
+        .result-container {
+            display: none; 
+        }
+
+        /* อนิเมชั่นหัวใจที่ไม่ได้ใช้ในโปรเจกต์นี้ */
+        .cssload-main {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="question-container container">
+        <img class="local-gif" src="bear-reply-me.gif" alt="Waiting for love">
+        <h2 class="question">เธอรักฉันไหม?</h2>
+
+        <div class="button-container">
+            <button class="yes-btn btn js-yes-btn">Yes</button> 
+            <button class="no-btn btn js-no-btn">No</button>
+        </div>
+    </div>
+
+    <div class="result-container container">
+        <img class="gif-result" src="bear-celebrate-love.gif" alt="Joyful bears celebrating"> 
+        <h2>เค้าว่าแล้ว🥰</h2>
+    </div>
+
+    <script>
+        /* --- ส่วน JavaScript สั่งให้ปุ่มทำงาน --- */
+        const yesBtn = document.querySelector('.js-yes-btn');
+        const noBtn = document.querySelector('.js-no-btn');
+        const questionContainer = document.querySelector('.question-container');
+        const resultContainer = document.querySelector('.result-container');
+
+        // เมื่อกดปุ่ม Yes
+        yesBtn.addEventListener('click', () => {
+            questionContainer.style.display = 'none'; // ซ่อนหน้าคำถาม
+            resultContainer.style.display = 'block';  // โชว์หน้าผลลัพธ์
+        });
+
+        // เมื่อเอาเมาส์ไปชี้ (หรือเอานิ้วแตะบนมือถือ) ปุ่ม No จะเปลี่ยนตำแหน่งสุ่ม
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // ป้องกันการกดบนมือถือ
+            moveButton(e);
+        });
+
+        function moveButton(e) {
+            // คำนวณหาตำแหน่งสุ่มบนหน้าจอ
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // สุ่มตำแหน่งใหม่โดยไม่ให้ตกขอบ
+            const randomX = Math.floor(Math.random() * (windowWidth - btnWidth));
+            const randomY = Math.floor(Math.random() * (windowHeight - btnHeight));
+
+            noBtn.style.position = 'fixed'; // ให้ขยับตามหน้าจอ
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+    </script>
+</body>
+</html>
